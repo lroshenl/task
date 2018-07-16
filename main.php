@@ -7,11 +7,11 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-  <title>Таблица размеров обуви</title>
+  <title>Task</title>
  </head>
  <body>
   <table border="1" rules="cols">
-   <caption>Таблица размеров обуви</caption>
+   <caption>Task status</caption>
    <tr>
     <th>TODO</th>
     <th>DOING</th>
