@@ -24,23 +24,54 @@
    $query ="SELECT name,com FROM todo";
    if($result = mysqli_query($link, $query)){
      while ($row = mysqli_fetch_row($result)) {
-        echo "$row[0]  "."($row[1])";
+        echo "$row[0]  "."($row[1])<br>";
      }
    }
    ?></td>
+   <td>
+     <?php
+   $query ="SELECT name,com FROM doing";
+   if($result = mysqli_query($link, $query)){
+     while ($row = mysqli_fetch_row($result)) {
+        echo "$row[0]  "."($row[1])<br>";
+     }
+   }
+   ?></td>
+   <td>
+     <?php
+   $query ="SELECT name,com FROM done";
+   if($result = mysqli_query($link, $query)){
+     while ($row = mysqli_fetch_row($result)) {
+        echo "$row[0]  "."($row[1])<br>";
+     }
+   }
+   ?></td>
+ </tr>
+
   </table>
   <button id="opener">Create task</button>
-  <form id="dialog" placeholder="description" >
-    <p><input placeholder="name" name="name"> </p>
-    <p><textarea name="description" placeholder="description"></textarea></p>
-    <p><select name="select" size="3" multiple>
-    <option selected value="s1">TODO</option>
-    <option value="s2">DOING</option>
-    <option value="s3">DONE</option>
+  <form id="dialog"  method="post" action="" >
+    <p><input  type="text" placeholder="name" name="name"> </p>
+    <p><textarea type="text" name="description" placeholder="description"></textarea></p>
+    <p><select  name="select" size="3" >
+    <option selected value="todo">TODO</option>
+    <option value="doing">DOING</option>
+    <option value="done">DONE</option>
     </select>
     <br>
-   <input type="submit" value="Отправить" align="center"></p>
+   <input type="submit" value="Отправить" name = " submit" align="center"></p>
   </form>
+  <br><br><br>
+
+  <?php//adding new task
+
+    print_r($_POST);
+    if(isset($_POST['submit']))
+    {
+      print_r($_POST);
+      if ($ok = mysql_query("insert into $_POST['select'] values(2,$_POST['name'],now,0)"))
+    }
+   ?>
 
   <script>
   $( "#dialog" ).dialog({ autoOpen: false });
