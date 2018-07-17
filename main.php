@@ -45,7 +45,8 @@
         echo "$row[0]  "."($row[1])<br>";
      }
    }
-   ?></td>
+   ?>
+ </td>
  </tr>
 
   </table>
@@ -61,17 +62,22 @@
     <br>
    <input type="submit" value="Отправить" name = " submit" align="center"></p>
   </form>
-  <br><br><br>
 
-  <?php//adding new task
-
+  <?php
+  if(isset($_POST['submit']))
+  {
     print_r($_POST);
-    if(isset($_POST['submit']))
-    {
-      print_r($_POST);
-      if ($ok = mysql_query("insert into $_POST['select'] values(2,$_POST['name'],now,0)"))
-    }
-   ?>
+    $link = mysqli_connect($host, $user, $password, $database)
+        or die("Ошибка " . mysqli_error($link));
+    $table_name = $_POST['select'];
+    $name = $_POST['name'];
+      if (mysqli_query($link,"insert into $table_name values(2,$name,now(),0)"))
+      {
+        echo "LOLOL";
+      }
+  }
+    ?>
+
 
   <script>
   $( "#dialog" ).dialog({ autoOpen: false });
@@ -79,5 +85,6 @@
     $( "#dialog" ).dialog( "open" );
   });
   </script>
+
  </body>
 </html>
