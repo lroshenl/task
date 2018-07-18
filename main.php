@@ -66,16 +66,38 @@
   <?php
   if(isset($_POST['submit']))
   {
-    print_r($_POST);
-    $link = mysqli_connect($host, $user, $password, $database)
-        or die("Ошибка " . mysqli_error($link));
+
+    //$name = htmlentities(mysql_real_escape_string($link, $_POST['name']));
+    //$table_name  = htmlentities(mysql_real_escape_string($link, $_POST['select']));
+    //$status = explode('  ', mysql_stat($link));
     $table_name = $_POST['select'];
     $name = $_POST['name'];
-      if (mysqli_query($link,"insert into $table_name values(2,$name,now(),0)"))
-      {
-        echo "LOLOL";
-      }
+    if ($table_name == 'todo')
+    {
+      $query = "INSERT INTO todo (name,date,com) VALUES('$name','now()',0)";
+      $result = mysqli_query($link,$query);
+       header("Location: ".$_SERVER['REQUEST_URI']);
+
+    }
+    if ($table_name == 'doing')
+    {
+      $query = "INSERT INTO doing (name,date,com) VALUES('$name','now()',0)";
+      $result = mysqli_query($link,$query);
+       header("Location: ".$_SERVER['REQUEST_URI']);
+
+    }
+    if ($table_name == 'done')
+    {
+      $query = "INSERT INTO done (name,date,com) VALUES('$name','now()',0)";
+      $result = mysqli_query($link,$query);
+       header("Location: ".$_SERVER['REQUEST_URI']);
+
+
+    }
+    $_POST['select']= 'null';
   }
+
+
     ?>
 
 
