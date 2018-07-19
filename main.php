@@ -120,6 +120,16 @@
   <input type="submit" value="Отправить" name = " submit1" align="center">
 </form>
 
+<?php
+  if(isset($_POST['message']))
+  {
+    $uid = $_POST['message'];
+    //echo "$uid"
+    echo "LOLOLOLOL";;
+  }
+?>
+
+
   <script>
   $( "#dialog" ).dialog({ autoOpen: false });
   $( "#opener" ).click(function() {
@@ -153,22 +163,49 @@
 
   <script>
   document.querySelector('ul').addEventListener('click', e => {
-  let content = e.target.innerHTML;
-  alert(`Содержимое элемента: "${content}"!`);
+    var message = e.target.innerHTML;
+    alert(message);
+    $.ajax({
+                     type: "POST",
+                     url: 'main.php',
+                     data: {message:message},
+                     success: function(data)
+                     {
+                         alert("success!");
+                     }
+                 });
   });
+
+
   </script>
 
   <script>
   document.querySelector('ol').addEventListener('click', e => {
-  let content = e.target.innerHTML;
-  alert(`Содержимое элемента: "${content}"!`);
+  var message = e.target.innerHTML;
+  $.ajax({
+                   type: "POST",
+                   url: 'main.php',
+                   data: {message:message},
+                   success: function(data)
+                   {
+                       alert("success!");
+                   }
+               });
   });
   </script>
 
   <script>
   document.querySelector('dl').addEventListener('click', e => {
-  let content = e.target.innerHTML;
-  alert(`Содержимое элемента: "${content}"!`);
+    var message = e.target.innerHTML;
+    $.ajax({
+                     type: "POST",
+                     url: 'main.php',
+                     data: {message:message},
+                     success: function(data)
+                     {
+                         alert("success!");
+                     }
+                 });
   });
   </script>
 
