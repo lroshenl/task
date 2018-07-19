@@ -2,6 +2,26 @@
 <html>
  <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <style>
+    li {
+    list-style-type: none;
+   }
+
+    li {
+      cursor: pointer;
+    }
+
+    dt {
+      cursor: pointer;
+    }
+
+    div{
+  cursor: pointer;
+}
+
+  </style>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -15,41 +35,41 @@
     <th>DOING</th>
     <th>DONE</th>
    </tr>
-   <tr><td><?php
-   require_once 'connection.php'; // подключаем скрипт
-   // подключаемся к серверу
+   <div  class="wrapper">
+     <div> lol kek cheburek </div>
+   </div>
+   <tr><td><ul><?php
+   require_once 'connection.php';
    $link = mysqli_connect($host, $user, $password, $database)
        or die("Ошибка " . mysqli_error($link));
-   // выполняем операции с базой данных
    $query ="SELECT name,com FROM todo";
    if($result = mysqli_query($link, $query)){
      while ($row = mysqli_fetch_row($result)) {
-        echo "$row[0]  "."($row[1])<br>";
+        echo "<li>$row[0]  "."($row[1])</li>";
      }
    }
-   ?></td>
-   <td>
-     <?php
+   ?></ul></td>
+   <td><ol><?php
    $query ="SELECT name,com FROM doing";
    if($result = mysqli_query($link, $query)){
      while ($row = mysqli_fetch_row($result)) {
-        echo "$row[0]  "."($row[1])<br>";
+        echo "<li>$row[0]  "."($row[1])</li>";
      }
    }
-   ?></td>
-   <td>
-     <?php
+   ?></ol></td>
+   <td><dl><?php
    $query ="SELECT name,com FROM done";
    if($result = mysqli_query($link, $query)){
      while ($row = mysqli_fetch_row($result)) {
-        echo "$row[0]  "."($row[1])<br>";
+        echo "<dt>$row[0]  "."($row[1])</dt>";
      }
    }
-   ?>
- </td>
+   ?></dl></td>
+ </div>
  </tr>
 
   </table>
+
   <button id="opener">Create task</button>
   <form id="dialog"  method="post" action="" >
     <p><input  type="text" placeholder="name" name="name"> </p>
@@ -66,10 +86,6 @@
   <?php
   if(isset($_POST['submit']))
   {
-
-    //$name = htmlentities(mysql_real_escape_string($link, $_POST['name']));
-    //$table_name  = htmlentities(mysql_real_escape_string($link, $_POST['select']));
-    //$status = explode('  ', mysql_stat($link));
     $table_name = $_POST['select'];
     $name = $_POST['name'];
     if ($table_name == 'todo')
@@ -77,34 +93,82 @@
       $query = "INSERT INTO todo (name,date,com) VALUES('$name','now()',0)";
       $result = mysqli_query($link,$query);
        header("Location: ".$_SERVER['REQUEST_URI']);
-
     }
     if ($table_name == 'doing')
     {
       $query = "INSERT INTO doing (name,date,com) VALUES('$name','now()',0)";
       $result = mysqli_query($link,$query);
        header("Location: ".$_SERVER['REQUEST_URI']);
-
     }
     if ($table_name == 'done')
     {
       $query = "INSERT INTO done (name,date,com) VALUES('$name','now()',0)";
       $result = mysqli_query($link,$query);
-       header("Location: ".$_SERVER['REQUEST_URI']);
-
-
+      header("Location: ".$_SERVER['REQUEST_URI']);
     }
     $_POST['select']= 'null';
   }
+?>
 
-
-    ?>
-
+<form id="dialog1" action="" method="post">
+  <p><textarea type="text" name="description1" placeholder="description"></textarea></p>
+  <p><select  name="select1" size="3" >
+  <option selected value="todo">TODO</option>
+  <option value="doing">DOING</option>
+  <option value="done">DONE</option>
+  </select>
+  <input type="submit" value="Отправить" name = " submit1" align="center">
+</form>
 
   <script>
   $( "#dialog" ).dialog({ autoOpen: false });
   $( "#opener" ).click(function() {
     $( "#dialog" ).dialog( "open" );
+  });
+  </script>
+
+  <script>
+    $( "#dialog1" ).dialog({ autoOpen: false });
+    var ul = document.querySelector('ul');
+    ul.onclick = function(event) {
+      $( "#dialog1" ).dialog( "open" );
+    };
+  </script>
+
+  <script>
+    $( "#dialog1" ).dialog({ autoOpen: false });
+    var ul = document.querySelector('ol');
+    ul.onclick = function(event) {
+      $( "#dialog1" ).dialog( "open" );
+    };
+  </script>
+
+  <script>
+    $( "#dialog1" ).dialog({ autoOpen: false });
+    var ul = document.querySelector('dl');
+    ul.onclick = function(event) {
+      $( "#dialog1" ).dialog( "open" );
+    };
+  </script>
+
+  <script>
+  document.querySelector('ul').addEventListener('click', e => {
+  let content = e.target.innerHTML;
+  alert(`Содержимое элемента: "${content}"!`);
+  });
+  </script>
+
+  <script>
+  document.querySelector('ol').addEventListener('click', e => {
+  let content = e.target.innerHTML;
+  alert(`Содержимое элемента: "${content}"!`);
+  });
+  </script>
+
+  <script>
+  document.querySelector('dl').addEventListener('click', e => {
+  let content = e.target.innerHTML;
+  alert(`Содержимое элемента: "${content}"!`);
   });
   </script>
 
