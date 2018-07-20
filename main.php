@@ -35,9 +35,6 @@
     <th>DOING</th>
     <th>DONE</th>
    </tr>
-   <div  class="wrapper">
-     <div> lol kek cheburek </div>
-   </div>
    <tr><td><ul><?php
    require_once 'connection.php';
    $link = mysqli_connect($host, $user, $password, $database)
@@ -120,15 +117,23 @@
   <input type="submit" value="Отправить" name = " submit1" align="center">
 </form>
 
-<?php
-  if(isset($_POST['message']))
-  {
-    $uid = $_POST['message'];
-    //echo "$uid"
-    echo "LOLOLOLOL";;
-  }
-?>
+  <?php
+    if(isset($_GET['message']))
+    {
+      $message = $_GET['message'];
+      $flag =true;
+      $a = substr($message,0,strlen($message)-3);
 
+      if(isset($_POST['submit1']))
+      {
+        $url = 'http://localhost/main.php';
+        header("Location: $url");
+      }
+      unset($_GET);
+      $_GET['message']='null';
+    }
+    $_GET['message']='null';
+  ?>
 
   <script>
   $( "#dialog" ).dialog({ autoOpen: false });
@@ -138,75 +143,57 @@
   </script>
 
   <script>
+  $( "#dialog1" ).dialog({ autoOpen: false });
+  document.querySelector('ul').addEventListener('click', e => {
+  var message = e.target.innerHTML;
+  location.href = "main.php?message=" + message;
+  });
+  </script>
+
+  <script>
+  var flag = '<?php echo "$flag"; ?>';
+  if (flag)
+  {
     $( "#dialog1" ).dialog({ autoOpen: false });
     var ul = document.querySelector('ul');
-    ul.onclick = function(event) {
       $( "#dialog1" ).dialog( "open" );
-    };
+  }
   </script>
 
   <script>
-    $( "#dialog1" ).dialog({ autoOpen: false });
-    var ul = document.querySelector('ol');
-    ul.onclick = function(event) {
-      $( "#dialog1" ).dialog( "open" );
-    };
-  </script>
-
-  <script>
-    $( "#dialog1" ).dialog({ autoOpen: false });
-    var ul = document.querySelector('dl');
-    ul.onclick = function(event) {
-      $( "#dialog1" ).dialog( "open" );
-    };
-  </script>
-
-  <script>
-  document.querySelector('ul').addEventListener('click', e => {
-    var message = e.target.innerHTML;
-    alert(message);
-    $.ajax({
-                     type: "POST",
-                     url: 'main.php',
-                     data: {message:message},
-                     success: function(data)
-                     {
-                         alert("success!");
-                     }
-                 });
-  });
-
-
-  </script>
-
-  <script>
+  $( "#dialog1" ).dialog({ autoOpen: false });
   document.querySelector('ol').addEventListener('click', e => {
   var message = e.target.innerHTML;
-  $.ajax({
-                   type: "POST",
-                   url: 'main.php',
-                   data: {message:message},
-                   success: function(data)
-                   {
-                       alert("success!");
-                   }
-               });
+  location.href = "main.php?message=" + message;
   });
   </script>
 
   <script>
+  var flag = '<?php echo "$flag"; ?>';
+  if (flag)
+  {
+    $( "#dialog1" ).dialog({ autoOpen: false });
+    var ul = document.querySelector('ol');
+      $( "#dialog1" ).dialog( "open" );
+  }
+  </script>
+
+  <script>
+  $( "#dialog1" ).dialog({ autoOpen: false });
   document.querySelector('dl').addEventListener('click', e => {
-    var message = e.target.innerHTML;
-    $.ajax({
-                     type: "POST",
-                     url: 'main.php',
-                     data: {message:message},
-                     success: function(data)
-                     {
-                         alert("success!");
-                     }
-                 });
+  var message = e.target.innerHTML;
+  location.href = "main.php?message=" + message;
   });
+  </script>
+
+  <script>
+  var flag = '<?php echo "$flag"; ?>';
+  if (flag)
+  {
+    $( "#dialog1" ).dialog({ autoOpen: false });
+    var ul = document.querySelector('dl');
+      $( "#dialog1" ).dialog( "open" );
+  }
   </script>
 
  </body>
