@@ -1,3 +1,131 @@
+<?php
+class user
+{
+  static function showing_tasks()
+  {
+
+    //require_once 'connection.php';
+    $host = 'localhost'; // адрес сервера
+    $database = 'task'; // имя базы данных
+    $user = 'user'; // имя пользователя
+    $password = '130987ac4d3'; // пароль
+    $link = mysqli_connect($host, $user, $password, $database)
+        or die("Ошибка " . mysqli_error($link));
+    $ar = array("todo","doing","done");
+    $ar1 = array("ul","ol","dl");
+    $query ="create table task(id int unsigned auto_increment primary key,name varchar(255),status varchar(255),date datetime)";
+    $query1 ="create table task_com(id int ,com varchar(255))";
+    mysqli_query($link,$query);
+    mysqli_query($link,$query1);
+    $i=0;
+    foreach ($ar1 as $it) {
+        ?><td><<?php echo "$it";?>><?php
+        $query ="SELECT name FROM task where status = '$ar[$i]' ORDER BY task.date desc";
+        if($result = mysqli_query($link, $query)){
+          while ($row = mysqli_fetch_row($result)) {
+             $res1 = mysqli_query($link,"SELECT id FROM task WHERE name = '$row[0]'");
+             $row1 = mysqli_fetch_row($res1);
+             $id = $row1[0];
+             $count = 0;
+             $res = mysqli_query($link,"SELECT com FROM task_com WHERE id = '$id'");
+             while ($rew = mysqli_fetch_row($res))
+             {
+               $count++;
+             }
+             echo "<li>$row[0] "."($count)</li>";
+          }
+        }
+        ?></td></<?php echo "$it";?>>
+        <?php
+        $i++;
+    }
+  }
+  static function showing_com()
+  {
+    $host = 'localhost'; // адрес сервера
+    $database = 'task'; // имя базы данных
+    $user = 'user'; // имя пользователя
+    $password = '130987ac4d3'; // пароль
+    $link = mysqli_connect($host, $user, $password, $database)
+        or die("Ошибка " . mysqli_error($link));
+    $message = $_GET['message'];
+    $a = substr($message,0,strlen($message)-3);
+    $query = "select id from task where name = '$a'";
+    $result = mysqli_query($link,$query);
+    $row = mysqli_fetch_row($result);
+    $id = $row[0];
+    $query = "select com from task_com where id = '$id'";
+    if($result = mysqli_query($link, $query)){
+      while ($row = mysqli_fetch_row($result)) {
+         echo "$row[0]<br>";
+      }
+    }
+    mysqli_close($link);
+  }
+  static function creating_task()
+  {
+    $host = 'localhost'; // адрес сервера
+    $database = 'task'; // имя базы данных
+    $user = 'user'; // имя пользователя
+    $password = '130987ac4d3'; // пароль
+    $link = mysqli_connect($host, $user, $password, $database)
+        or die("Ошибка " . mysqli_error($link));
+    if(isset($_POST['submit']))
+    {
+      $table_name = $_POST['select'];
+      $name = $_POST['name'];
+      $descr = $_POST['description'];
+      $query = "INSERT INTO task (name,status,date) VALUES('$name','$table_name',NOW())";
+      $result = mysqli_query($link,$query);
+      $query = "select id from task where name = '$name'";
+      $result = mysqli_query($link,$query);
+      $row = mysqli_fetch_row($result);
+      $id = $row[0];
+      $query = "INSERT INTO task_com VALUES($id,'$descr')";
+      $result = mysqli_query($link,$query);
+      header("Location: ".$_SERVER['REQUEST_URI']);
+      $_POST['select']= 'null';
+    }
+    mysqli_close($link);
+  }
+  static function creating_describe()
+  {
+      if(isset($_GET['message']))
+      {
+
+        $host = 'localhost'; // адрес сервера
+        $database = 'task'; // имя базы данных
+        $user = 'user'; // имя пользователя
+        $password = '130987ac4d3'; // пароль
+        $link = mysqli_connect($host, $user, $password, $database)
+            or die("Ошибка " . mysqli_error($link));
+        $message = $_GET['message'];
+        $flag =true;
+        $a = substr($message,0,strlen($message)-3);
+        if(isset($_POST['submit1']))
+        {
+          $table_name = $_POST['select1'];
+          $descr = $_POST['description1'];
+          $query = "update task set status = '$table_name' where name = '$a'";
+          $result = mysqli_query($link,$query);
+          $query = "select id from task where name = '$a'";
+          $result = mysqli_query($link,$query);
+          $row = mysqli_fetch_row($result);
+          $id = $row[0];
+          if($descr!=="")
+          {
+            $query = "INSERT INTO task_com VALUES($id,'$descr')";
+            $result = mysqli_query($link,$query);
+          }
+          $url = 'http://localhost/main.php';
+          header("Location: $url");
+        }
+      }
+      $flag = false;
+      mysqli_close($link);
+  }
+}
+?>
 <!DOCTYPE HTML>
 <html>
  <head>
@@ -21,6 +149,7 @@
   cursor: pointer;
 }
 
+
   </style>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -35,61 +164,8 @@
     <th>DOING</th>
     <th>DONE</th>
    </tr>
-   <tr><td><ul><?php
-   require_once 'connection.php';
-   $link = mysqli_connect($host, $user, $password, $database)
-       or die("Ошибка " . mysqli_error($link));
-   //$count = mysql_num_rows($res);
-   $query ="SELECT name FROM todo ORDER BY todo.date desc";
-   if($result = mysqli_query($link, $query)){
-     while ($row = mysqli_fetch_row($result)) {
-        $res1 = mysqli_query($link,"SELECT id FROM todo WHERE name = '$row[0]'");
-        $row1 = mysqli_fetch_row($res1);
-        $id = $row1[0];
-        $count = 0;
-        $res = mysqli_query($link,"SELECT com FROM todo_com WHERE id = '$id'");
-        while ($rew = mysqli_fetch_row($res))
-        {
-          $count++;
-        }
-        echo "<li>$row[0] "."($count)</li>";
-     }
-   }
-   ?></ul></td>
-   <td><ol><?php
-   $query ="SELECT name FROM doing ORDER BY doing.date desc";
-   if($result = mysqli_query($link, $query)){
-     while ($row = mysqli_fetch_row($result)) {
-        $res1 = mysqli_query($link,"SELECT id FROM doing WHERE name = '$row[0]'");
-        $row1 = mysqli_fetch_row($res1);
-        $id = $row1[0];
-        $count = 0;
-        $res = mysqli_query($link,"SELECT com FROM doing_com WHERE id = '$id'");
-        while ($rew = mysqli_fetch_row($res))
-        {
-          $count++;
-        }
-        echo "<li>$row[0] "."($count)</li>";
-     }
-   }
-   ?></ol></td>
-   <td><dl><?php
-   $query ="SELECT name FROM done ORDER BY done.date desc";
-   if($result = mysqli_query($link, $query)){
-     while ($row = mysqli_fetch_row($result)) {
-        $res1 = mysqli_query($link,"SELECT id FROM done WHERE name = '$row[0]'");
-        $row1 = mysqli_fetch_row($res1);
-        $id = $row1[0];
-        $count = 0;
-        $res = mysqli_query($link,"SELECT com FROM done_com WHERE id = '$id'");
-        while ($rew = mysqli_fetch_row($res))
-        {
-          $count++;
-        }
-        echo "<li>$row[0] "."($count)</li>";
-     }
-   }
-   ?></dl></td>
+   <tr><?php user::showing_tasks(); ?>
+   </tr>
  </div>
  </tr>
 
@@ -108,167 +184,20 @@
    <input type="submit" value="Отправить" name = " submit" align="center"></p>
   </form>
 
-  <?php
-  if(isset($_POST['submit']))
-  {
-    $table_name = $_POST['select'];
-    $name = $_POST['name'];
-    $descr = $_POST['description'];
-    if ($table_name == 'todo')
-    {
-      $query = "INSERT INTO todo (name,date) VALUES('$name',NOW())";
-      $result = mysqli_query($link,$query);
-      $query = "select id from todo where name = '$name'";
-      $result = mysqli_query($link,$query);
-      $row = mysqli_fetch_row($result);
-      $id = $row[0];
-      $query = "INSERT INTO todo_com VALUES($id,'$descr')";
-      $result = mysqli_query($link,$query);
-       header("Location: ".$_SERVER['REQUEST_URI']);
-    }
-    if ($table_name == 'doing')
-    {
-      $query = "INSERT INTO doing (name,date) VALUES('$name',NOW())";
-      $result = mysqli_query($link,$query);
-      $query = "select id from doing where name = '$name'";
-      $result = mysqli_query($link,$query);
-      $row = mysqli_fetch_row($result);
-      $id = $row[0];
-      $query = "INSERT INTO doing_com VALUES($id,'$descr')";
-      $result = mysqli_query($link,$query);
-       header("Location: ".$_SERVER['REQUEST_URI']);
-    }
-    if ($table_name == 'done')
-    {
-      $query = "INSERT INTO done (name,date) VALUES('$name',NOW())";
-      $result = mysqli_query($link,$query);
-      $query = "select id from done where name = '$name'";
-      $result = mysqli_query($link,$query);
-      $row = mysqli_fetch_row($result);
-      $id = $row[0];
-      $query = "INSERT INTO done_com VALUES($id,'$descr')";
-      $result = mysqli_query($link,$query);
-      header("Location: ".$_SERVER['REQUEST_URI']);
-    }
-    $_POST['select']= 'null';
-  }
-?>
+  <?php user::creating_task(); ?>
 
 <form id="dialog1" action="" method="post">
   <p><textarea type="text" name="description1" placeholder="description"></textarea></p>
-  <!--<p><select  name="select1" size="3" >
+  <p><select  name="select1" size="3" >
   <option selected value="todo">TODO</option>
   <option value="doing">DOING</option>
   <option value="done">DONE</option>
-</select>-->
-  <p><?php
-    $message = $_GET['message'];
-    $a = substr($message,0,strlen($message)-3);
-    //echo "$a<br>";
-    //echo "todo<br>";
-    if($result = mysqli_query($link,"select id from todo where exists (select id from todo where todo.name = '$a')")){
-      if ($row = mysqli_fetch_row($result)) {
-        //echo "from todo<br>";
-        $query = "select id from todo where name = '$a'";
-        $result = mysqli_query($link,$query);
-        $row = mysqli_fetch_row($result);
-        $id = $row[0];
-        $query = "select com from todo_com where id = '$id'";
-        if($result = mysqli_query($link, $query)){
-          while ($row = mysqli_fetch_row($result)) {
-             echo "$row[0]<br>";
-          }
-        }
-      }
-    }
-
-    //echo "doing<br>";
-    if($result = mysqli_query($link,"select id from doing where exists (select id from doing where doing.name = '$a')")){
-      if ($row = mysqli_fetch_row($result)) {
-        //echo "from doing<br>";
-        $query = "select id from doing where name = '$a'";
-        $result = mysqli_query($link,$query);
-        $row = mysqli_fetch_row($result);
-        $id = $row[0];
-        $query = "select com from doing_com where id = '$id'";
-        if($result = mysqli_query($link, $query)){
-          while ($row = mysqli_fetch_row($result)) {
-             echo "$row[0]<br>";
-          }
-        }
-      }
-    }
-
-  //  echo "done<br>";
-    if($result = mysqli_query($link,"select id from done where exists (select id from done where done.name = '$a')")){
-      if ($row = mysqli_fetch_row($result)) {
-        //echo "from done<br>";
-        $query = "select id from done where name = '$a'";
-        $result = mysqli_query($link,$query);
-        $row = mysqli_fetch_row($result);
-        $id = $row[0];
-        $query = "select com from done_com where id = '$id'";
-        if($result = mysqli_query($link, $query)){
-          while ($row = mysqli_fetch_row($result)) {
-             echo "$row[0]<br>";
-          }
-        }
-
-      }
-    }
-  ?></p>
+</select>
+  <p><?php user::showing_com(); ?></p>
   <input type="submit" value="Отправить" name = " submit1" align="center">
 </form>
 
-  <?php
-    if(isset($_GET['message']))
-    {
-      $message = $_GET['message'];
-      $flag =true;
-      $a = substr($message,0,strlen($message)-3);
-      if(isset($_POST['submit1']))
-      {
-        $table_name = $_POST['select1'];
-        $descr = $_POST['description1'];
-        if($result = mysqli_query($link,"select id from todo where exists (select id from todo where todo.name = '$a')")){
-          if ($row = mysqli_fetch_row($result)) {
-            $query = "select id from todo where name = '$a'";
-            $result = mysqli_query($link,$query);
-            $row = mysqli_fetch_row($result);
-            $id = $row[0];
-
-            $query = "INSERT INTO todo_com VALUES($id,'$descr')";
-            $result = mysqli_query($link,$query);
-          }
-        }
-        if($result = mysqli_query($link,"select id from doing where exists (select id from doing where doing.name = '$a')")){
-          if ($row = mysqli_fetch_row($result)) {
-            $query = "select id from doing where name = '$a'";
-            $result = mysqli_query($link,$query);
-            $row = mysqli_fetch_row($result);
-            $id = $row[0];
-            $query = "INSERT INTO doing_com VALUES($id,'$descr')";
-            $result = mysqli_query($link,$query);
-          }
-        }
-        if($result = mysqli_query($link,"select id from done where exists (select id from done where done.name = '$a')")){
-          if ($row = mysqli_fetch_row($result)) {
-            $query = "select id from done where name = '$a'";
-            $result = mysqli_query($link,$query);
-            $row = mysqli_fetch_row($result);
-            $id = $row[0];
-            $query = "INSERT INTO done_com VALUES($id,'$descr')";
-            $result = mysqli_query($link,$query);
-          }
-        }
-        $url = 'http://localhost/main.php';
-        header("Location: $url");
-      }
-      unset($_GET);
-      $_GET['message']='null';
-    }
-    $_GET['message']='null';
-  ?>
+  <?php user::creating_describe(); ?>
 
   <script>
   $( "#dialog" ).dialog({ autoOpen: false });
@@ -286,7 +215,7 @@
   </script>
 
   <script>
-  var flag = '<?php echo "$flag"; ?>';
+  var flag = '<?php $flag = isset($_GET['message']); echo "$flag"; ?>';
   if (flag)
   {
     $( "#dialog1" ).dialog({ autoOpen: false });
@@ -304,7 +233,7 @@
   </script>
 
   <script>
-  var flag = '<?php echo "$flag"; ?>';
+  var flag = '<?php $flag = isset($_GET['message']); echo "$flag"; ?>';
   if (flag)
   {
     $( "#dialog1" ).dialog({ autoOpen: false });
@@ -322,7 +251,7 @@
   </script>
 
   <script>
-  var flag = '<?php echo "$flag"; ?>';
+  var flag = '<?php $flag = isset($_GET['message']); echo "$flag"; ?>';
   if (flag)
   {
     $( "#dialog1" ).dialog({ autoOpen: false });
